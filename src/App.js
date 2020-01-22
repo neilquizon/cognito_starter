@@ -6,88 +6,69 @@ import Home from './components/Home';
 import Register from './components/auth/Register';
 import Welcome from './components/auth/Welcome';
 import LogIn from './components/auth/LogIn';
-import {Auth} from 'aws-amplify';
+import ForgotPassword from './components/auth/ForgotPassword';
+import ForgotPasswordSubmit from './components/auth/ForgotPasswordSubmit';
+import PasswordReset from './components/auth/PasswordReset';
+import ChangePassword from './components/auth/ChangePassword';
+import { Auth } from 'aws-amplify';
 
 class App extends Component {
-  //declare state variables
   state = {
-    isAuth: false,
-    user: null,
-    checkingAuth: true
+    isAuth : false,
+    user : null,
+    checkingAuth : true
   }
-  //helper methods to set variables
+
   authenticateUser = authenticated => {
-    this.setState({isAuth: authenticated});
+    this.setState({isAuth : authenticated});
   }
 
   setAuthUser = user => {
-    this.setState({user: user});
+    this.setState({user : user});
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     try {
-      const session = await Auth.currentSession();
-      this.authenticateUser(true)
+      const session  = await Auth.currentSession();
+      this.authenticateUser(true);
+      console.log(this.state.isAuth);
       console.log(session);
       const user = await Auth.currentAuthenticatedUser();
       this.setAuthUser(user);
-    } catch(error){
+    }
+    catch (error) {
       console.log(error);
     }
-    this.setState({checkingAuth: false})
+    this.setState({checkingAuth : false})
   }
-
 
   render() {
     const authProps = {
-      isAuth: this.state.isAuth,
+      isAuth : this.state.isAuth,
       user: this.state.user,
       authenticateUser: this.authenticateUser,
-      setAuthUser: this.setAuthUser
+      setAuthUser:this.setAuthUser
     }
-
-    //wait for Auth methods before rendering router
-
-
-
     return (
-      !this.state.checkingAuth &&
-<div className="App">
-
+      !this.state.checkingAuth && 
+      <div className="App">
         <Router>
           <div>
-            <Navbar auth={authProps}/>
+            <Navbar auth = {authProps} />
             <Switch>
-              <Route 
-                exact path="/" 
-                render={(props) => 
-                  <Home {...props} auth={authProps} />
-                }
-              />
-              <Route 
-                exact path="/login" 
-                render={(props) => 
-                  <LogIn {...props} auth={authProps} />
-                } 
-              />
-              <Route 
-                exact path="/register" 
-                render={(props) => 
-                  <Register {...props} auth={authProps} />
-                } 
-              />
-              <Route 
-                exact path="/welcome" 
-                render={(props) => 
-                  <Welcome {...props} auth={authProps} />
-                } 
-              />
+              <Route exact path="/" render = {(props) => <Home {...props} auth = {authProps} />} />
+              <Route exact path="/register" render = {(props) => <Register {...props} auth = {authProps} />} />
+              <Route exact path="/welcome" render = {(props) => <Welcome {...props} auth = {authProps} />} />
+              <Route exact path="/login" render = {(props) => <LogIn {...props} auth = {authProps} />} />
+              <Route exact path="/forgotpassword" render = {(props) => <ForgotPassword {...props} auth = {authProps} />} />
+              <Route exact path="/forgotpasswordsubmit" render = {(props) => <ForgotPasswordSubmit {...props} auth = {authProps} />} />
+              <Route exact path="/passwordreset" render = {(props) => <PasswordReset {...props} auth = {authProps} />} />
+              <Route exact path="/changepassword" render = {(props) => <ChangePassword {...props} auth = {authProps} />} />
             </Switch>
           </div>
         </Router>
       </div>
     );
-
   }
 }
 
